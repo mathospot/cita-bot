@@ -49,6 +49,63 @@ Installation TL;DR
 
 6. Run `python grab_me.py` or `python3 grab_me.py`, follow the voice instructions.
 
+Run with Docker
+----------------
+
+This repository includes a Docker setup with:
+- Python 3.10
+- Chromium + chromedriver
+- espeak (for voice notifications)
+- bcncita package installed locally
+
+1. Build image:
+
+```bash
+docker compose build
+```
+
+2. Create your config file (for example `grab_me.py`) based on `example1.py` or `example2.py`.
+
+3. Run mounting your config file:
+
+```bash
+docker compose run --rm cita-bot
+```
+
+By default, `docker-compose.yml` mounts:
+- `./grab_me.py` as `/config/grab_me.py` (read-only)
+- `cita-bot-artifacts` docker volume as `/app/artifacts` (for downloads and snapshots)
+
+If you prefer plain Docker:
+
+```bash
+docker build -t cita-bot:local .
+docker run --rm \
+    -e CITA_HEADLESS=1 \
+    -v "$PWD/grab_me.py:/config/grab_me.py:ro" \
+        -v cita-bot-artifacts:/app/artifacts \
+    cita-bot:local
+```
+
+Notes:
+- In Docker, the browser runs headless by default (`CITA_HEADLESS=1`).
+- `chromedriver` is available at `/usr/local/bin/chromedriver` inside the container.
+- Using a Docker volume for `/app/artifacts` avoids host permission issues across different machines.
+
+Optional: save artifacts to a local folder
+
+If you really want artifacts in host file system, create the folder first and run container with your user id:
+
+```bash
+mkdir -p artifacts
+docker run --rm \
+    --user "$(id -u):$(id -g)" \
+    -e CITA_HEADLESS=1 \
+    -v "$PWD/grab_me.py:/config/grab_me.py:ro" \
+    -v "$PWD/artifacts:/app/artifacts" \
+    cita-bot:local
+```
+
 ### Optional steps for automation:
 
 7. Get API key from https://anti-captcha.com ($5 is enough, trust me! :) and set `auto_captcha=True`.

@@ -216,6 +216,11 @@ def init_wedriver(context: CustomerProfile):
     options.add_argument("--ignore-ssl-errors")
     options.add_argument("--disable-gpu")
 
+    if str(os.environ.get("CITA_HEADLESS", "0")).lower() in ["1", "true", "yes", "on"]:
+        options.add_argument("--headless=new")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+
     settings = {
         "recentDestinations": [{"id": "Save as PDF", "origin": "local", "account": ""}],
         "selectedDestinationId": "Save as PDF",

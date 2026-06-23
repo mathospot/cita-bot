@@ -1,0 +1,15 @@
+services:
+  cita-bot:
+    build:
+      context: .
+    image: cita-bot:local
+    environment:
+      CITA_HEADLESS: "1"
+    volumes:
+      - ./grab_me.py:/config/grab_me.py:ro
+      - cita-bot-artifacts:/app/artifacts
+    working_dir: /app/artifacts
+    command: ["/config/grab_me.py"]
+
+volumes:
+  cita-bot-artifacts:
