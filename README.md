@@ -58,15 +58,42 @@ This repository includes a Docker setup with:
 - espeak (for voice notifications)
 - bcncita package installed locally
 
-1. Build image:
+Prerequisites
+
+1. You need a Docker engine running on your machine.
+2. On macOS, a good free option is Rancher Desktop.
+3. Open Rancher Desktop and wait until it is fully started before using terminal commands.
+
+On macOS with Rancher Desktop
+
+1. Install Rancher Desktop.
+2. Start Rancher Desktop.
+3. Open Terminal and verify Docker is available:
+
+```bash
+docker --version
+docker compose version
+```
+
+If those commands fail, Rancher Desktop is not ready yet (or Docker CLI is not configured in your shell).
+
+Run from terminal (step by step)
+
+1. Clone the repository and enter the project folder:
+
+```bash
+git clone https://github.com/cita-bot/cita-bot.git
+cd cita-bot
+```
+
+2. Build the image:
 
 ```bash
 docker compose build
 ```
 
-2. Create your config file (for example `grab_me.py`) based on `example1.py` or `example2.py`.
-
-3. Run mounting your config file:
+3. Create your config file (for example `grab_me.py`) based on `example1.py` or `example2.py`.
+4. Run the bot:
 
 ```bash
 docker compose run --rm cita-bot
@@ -74,27 +101,29 @@ docker compose run --rm cita-bot
 
 By default, `docker-compose.yml` mounts:
 - `./grab_me.py` as `/config/grab_me.py` (read-only)
-- `cita-bot-artifacts` docker volume as `/app/artifacts` (for downloads and snapshots)
+- `cita-bot-artifacts` docker volume as `/app/artifacts` (downloads and snapshots)
 
-If you prefer plain Docker:
+Using a Docker volume for artifacts avoids host permission issues across different machines.
+
+If you prefer plain Docker
 
 ```bash
 docker build -t cita-bot:local .
 docker run --rm \
     -e CITA_HEADLESS=1 \
     -v "$PWD/grab_me.py:/config/grab_me.py:ro" \
-        -v cita-bot-artifacts:/app/artifacts \
+    -v cita-bot-artifacts:/app/artifacts \
     cita-bot:local
 ```
 
-Notes:
+Notes
+
 - In Docker, the browser runs headless by default (`CITA_HEADLESS=1`).
 - `chromedriver` is available at `/usr/local/bin/chromedriver` inside the container.
-- Using a Docker volume for `/app/artifacts` avoids host permission issues across different machines.
 
 Optional: save artifacts to a local folder
 
-If you really want artifacts in host file system, create the folder first and run container with your user id:
+If you want artifacts in host file system, create the folder first and run container with your user id:
 
 ```bash
 mkdir -p artifacts
